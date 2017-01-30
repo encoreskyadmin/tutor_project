@@ -1,5 +1,5 @@
 <div id="login-form">
-<form class="form-container" role="form" method="POST" action="{{ url('/login') }}">
+<form class="form-container" role="form" id="formLogin">
      {{ csrf_field() }}
 <div class="regcont">
     <div class="row">
@@ -16,28 +16,24 @@
     <img class="imgy" src="{{ URL::asset('public/img/login.png') }}" alt="Login">
 </div>
 
-<div class="col-md-12 {{ $errors->has('email') ? ' has-error' : '' }}">
+
+<div class="col-md-12" >
+  <span class="help-block error-msg-login" style="color:red">
+            <strong></strong>
+    </span>
+</div>
+<div class="col-md-12">
   <label><b>Email</b></label>
 </div>
 <div class="col-md-12">
     <input type="text" id="email" class="input" placeholder="Enter Email" name="email" value="{{ old('email') }}" required>
-    @if ($errors->has('email'))
-        <span class="help-block" style="color:red">
-            <strong>{{ $errors->first('email') }}</strong>
-        </span>
-    @endif
 </div>
 
-<div class="col-md-12 {{ $errors->has('password') ? ' has-error' : '' }}">
+<div class="col-md-12">
     <label><b>Password </b></label>
 </div>
 <div class="col-md-12">
     <input type="password" id="password" class="input" placeholder="Enter Password" name="password" required>
-    @if ($errors->has('password'))
-        <span class="help-block" style="color:red">
-            <strong>{{ $errors->first('password') }}</strong>
-        </span>
-    @endif
 </div>
 <div class="col-md-12">
     <input type="checkbox" ame="remember" {{ old('remember') ? 'checked' : ''}} > Remember me
@@ -56,20 +52,20 @@
 </div>
 
 <script type="text/javascript">
-/*$(document).ready(function(){
+$(document).ready(function(){
   $( "form#formLogin" ).on( "submit", function( event ) {
     event.preventDefault();
-    $(this).find('.error-msg strong').html('');
+    $('.error-msg-login strong').html('');
     var formData = $( this ).serialize();
     $.post('login', formData, function(response) {  
-                if(response.auth == true){
-                  window.location = "{{ url('/home') }}";
-                }else{
-                  $.each(response, function(key, val){
-                      //$('.register-tutor-'+key).find('strong').html(val);
-                  });
-                }
-            });
+        if(response.status == 'success'){
+          window.location = "{{ url('/home') }}";
+        }else if(response.status == 'error'){
+            $('.error-msg-login strong').html(response.message);
+        }else{
+          alert('unknown error.');
+        }
+    });
   });
-});*/
+});
 </script>

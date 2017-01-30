@@ -39,60 +39,22 @@ class LoginController extends Controller
     {
         $this->middleware('guest', ['except' => 'logout']);
     }
-
-    /**
-     * Handle a login request to the application.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-   /* public function login(Request $request)
-    {   
-        $validation = $this->validateLogin($request);
-        dd($validation);
-        if ($validation->fails())  {  
-            return response()->json($validation->errors()->toArray());
-        }
-        else{
-
-            return $this->registered($request, $user)
-            ?: response()->json('success');
-        }
-
-        // If the class is using the ThrottlesLogins trait, we can automatically throttle
-        // the login attempts for this application. We'll key this by the username and
-        // the IP address of the client making these requests into this application.
-        if ($this->hasTooManyLoginAttempts($request)) {
-            $this->fireLockoutEvent($request);
-
-            return $this->sendLockoutResponse($request);
-        }
-
-        if ($this->attemptLogin($request)) {
-            return $this->sendLoginResponse($request);
-        }
-
-        // If the login attempt was unsuccessful we will increment the number of attempts
-        // to login and redirect the user back to the login form. Of course, when this
-        // user surpasses their maximum number of attempts they will get locked out.
-        $this->incrementLoginAttempts($request);
-
-        return $this->sendFailedLoginResponse($request);
-    }
-*/
-
-     /**
-     * Validate the user login request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     */
-   /* protected function validateLogin(Request $request)
+    protected function sendLoginResponse(Request $request)
     {
-        $this->validate($request, [
-            $this->username() => 'required', 'password' => 'required',
-        ]);
+        $request->session()->regenerate();
+        $this->clearLoginAttempts($request);
+        if ($request->ajax()) {
+            return response()->json(['status'=>'success', 'message'=>'Auth Successfully'], 200);
+        }else{
+            return response()->json(['status'=>'error', 'message'=>'Unknow Authentication'], 200);;
+        }
     }
-*/
+    protected function sendFailedLoginResponse(Request $request)
+    {
+        if ($request->ajax()) {
+            return response()->json(['status'=>'error', 'message'=>'Please check your email and password. If you still cant log in, contact your a2ztutors administrater.'], 200);
+        }
+    }
+   
 
 }
